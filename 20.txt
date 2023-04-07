@@ -1,0 +1,667 @@
+1.What is running result for each program? And explain by pointer box
+
+#include<stdio.h>
+void fun(int *p)
+{
+int q = 10;
+p = &q;
+}
+int main()
+{
+int r = 20;
+int *p = &r;
+fun(p);
+printf("%d", *p);
+return 0;
+}
+
+Running result:
+20
+
+Pointer box:
+
+
+         +---+     +---+
+p ------>| r |---->|20 |
+         +---+     +---+
+
+         +---+
+q ------>| 10|
+         +---+
+
+In this program, we initialize an integer variable `r` with the value 20, and a pointer `p` to `r`. `p` is then passed to the `fun()` function as an argument. In `fun()`, `p` is assigned the address of a local integer variable `q`, which has a value of 10. However, since `p` is passed by value, the original pointer `p` in `main()` is not affected. Therefore, when we print the value pointed to by `p` in `main()`, we get the original value of `r`, which is 20.
+
+
+Program 2:
+
+
+#include<stdio.h>
+void fun(int **pptr)
+{
+static int q = 10;
+*pptr = &q;
+}
+int main()
+{
+int r = 20;
+int *p = &r;
+fun(&p);
+printf("%d", *p);
+return 0;
+}
+
+Running result:
+10
+
+Pointer box:
+
+
+         +---+     +---+
+p ------>| r |---->|20 |
+         +---+     +---+
+
+         +---+
+pptr ---->| &p|
+         +---+
+         | q |
+         +---+
+
+In this program, we initialize an integer variable `r` with the value 20, and a pointer `p` to `r`. `p` is then passed to the `fun()` function as a pointer to a pointer, i.e., `&p`. In `fun()`, the pointer `*pptr` is assigned the address of a static integer variable `q`, which has a value of 10. Since `*pptr` points to `p`, `p` is also updated to point to `q`. Therefore, when we print the value pointed to by `p` in `main()`, we get the value of `q`, which is 10.
+
+Program 3:
+
+
+#include<stdio.h> 
+int main()
+{
+int a[5] = {1,2,3,4,5};
+int *ptr = (int*)(&a+1);
+printf("%d %d", *(a+1), *(ptr-1));
+return 0;
+}
+
+Running result:
+2 5
+
+Pointer box:
+
+
+  a[0]   a[1]   a[2]   a[3]   a[4]
++-----+-----+-----+-----+-----+
+|  1  |  2  |  3  |  4  |  5  |
++-----+-----+-----+-----+-----+
+
+        +---+ +---+ +---+ +---+ +---+
+(&a+1) -->| a[0] | | a[1] | | a[2] | | a[3] | | a[4] |
+        +---+ +---+ +---+ +---+ +---+
+
+                     +---+ +---+ +---+ +---+ +---+
+(ptr-1) ------------>| a[4] | | a[3] | | a[2] | | a[1] | | a[0] |
+                     +---+ +---+ +---+ +---+ +---+
+
+In this program, we declare an integer array `a` of size 5 and initialize it with values 1 to 5. We also declare an integer pointer `ptr` and initialize it to point to the address of `a+1`. `a+1` is the address of the second element of the array `a`. We then dereference `ptr-1` to get the value of the last element of `a`, which is 5. We also dereference `a+1` to get the value of the second element of `a`, which is 2. Therefore, when we print the values using `printf()`, we get `2 5`.
+
+Program 4:
+
+
+#include<stdio.h> 
+char *c[] = {"GeksQuiz", "MCQ", "TEST", "QUIZ"};
+char **cp[] = {c+3, c+2, c+1, c};
+char ***cpp = cp;
+int main()
+{
+printf("%s ", **++cpp);
+printf("%s ", *--*++cpp+3);
+printf("%s ", *cpp[-2]+3);
+printf("%s ", cpp[-1][-1]+1);
+return 0;
+}
+
+Running result:
+ TEST sQuiz Z CQ
+
+Pointer box:
+
+
++---+     +---+     +---+     +---+
+| c |---->|   |---->|   |---->|   |
++---+     +---+     +---+     +---+
+          |   |     |   |     |   |
+          +---+     +---+     +---+
+          |   |     |   |     |   |
+          +---+     +---+     +---+
+          |   |     |   |     |   |
+          +---+     +---+     +---+
+
++---+     +---+     +---+     +---+
+|cp |---->|   |---->|   |---->|   |
++---+     +---+     +---+     +---+
+          |   |     |   |     |   |
+          +---+     +---+     +---+
+          |   |     |   |     |   |
+          +---+     +---+     +---+
+          |   |     |   |     |   |
+          +---+     +---+     +---+
+
+          +----+     +----+     +----+     +----+
+cpp ----->|c+3 |---->|c+2 |---->|c+1 |---->| c  |
+          +----+     +----+     +----+     +----+
+
+In this program, we initialize an array of character pointers `c[]` with the values "GeksQuiz", "MCQ", "TEST", and "QUIZ". We also initialize an array of pointers to pointers `cp[]` to point to the array `c[]` in reverse order. We then initialize a triple pointer `cpp` to point to the first element of `cp[]`. We then use the `printf()` function to print the dereferenced values of `cpp` in various ways. In each case, we are accessing different elements of the `c[]` array by dereferencing pointers. The output shows the values that are printed when we access each element of the `c[]` array.
+
+Program:5
+
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+void fun(char** str_ref)
+{
+    str_ref++;
+}
+
+int main()
+{
+    char *str = (void *)malloc(100*sizeof(char));
+    strcpy(str, "GeeksQuiz");
+    fun(&str);
+    puts(str);
+    free(str);
+    return 0;
+}
+
+Running result: 
+GeeksQuiz
+
+Pointer box:
+
+
+    +---+     +---------------------+
+str |   |---->|      GeeksQuiz       |
+    +---+     +---------------------+
+
+In this program, we first allocate memory for a char array `str` using the `malloc()` function and then copy the string "GeeksQuiz" into it using the `strcpy()` function. We then call the function `fun()` and pass it a reference to `str`. The `fun()` function increments the reference to `str` by one, but this has no effect on the original `str` pointer because it is passed by value. Finally, we print the string using the `puts()` function and free the memory using the `free()` function.
+
+Program:6
+
+#include <stdio.h>
+
+void f(char **);
+
+int main()
+{
+    char *argv[] = { "ab", "cd", "ef", "gh", "ij", "kl" };
+    f(argv);
+    return 0;
+}
+
+void f(char **p)
+{
+    char *t;
+    t = (p += sizeof(int))[-1];
+    printf("%s\n", t);
+}
+
+Running result: gh
+
+Pointer box:
+
+
+    +---+     +-----+     +-----+     +-----+     +-----+     +-----+
+    |   |---->| "ab" |---->| "cd" |---->| "ef" |---->| "gh" |---->| "ij" |
+    +---+     +-----+     +-----+     +-----+     +-----+     +-----+
+              |     |     |     |     |     |     |     |     |     |
+              +-----+     +-----+     +-----+     +-----+     +-----+
+
+In this program, we declare an array of character pointers `argv[]` and initialize it with the values "ab", "cd", "ef", "gh", "ij", and "kl". We then call the function `f()` and pass it a reference to the first element of `argv[]`. In the `f()` function, we first increment the pointer `p` by the size of an integer (typically 4 bytes on most systems) using pointer arithmetic. We then subtract 1 from the resulting expression and assign the value to the pointer `t`. Finally, we print the value of `t` using the `printf()` function.
+
+Program:7
+
+#include <stdio.h>
+
+int main()
+{
+    int a[][3] = {1, 2, 3, 4, 5, 6};
+    int (*ptr)[3] = a;
+    printf("%d %d ", (*ptr)[1], (*ptr)[2]);
+    ++ptr;
+    printf("%d %d\n", (*ptr)[1], (*ptr)[2]);
+    return 0;
+}
+
+Running result: 
+2 3 5 6
+
+Pointer box:
+
+
+    +----+----+----+
+a[0] |  1 |  2 |  3 |
+     +----+----+----+
+a[1] |  4 |  5 |  6 |
+     +----+----+----+
+
+     +----+
+ptr  | a[0] |
+     +----+
+         |
+         v
+     +----+----+----+
+a[0] |  1 |  2 |  3 |
+     +----+----+----+
+a[1] |  4 |  5 |  6 |
+     +----+----+----+
+
+In this program, we declare a two-dimensional array `a` with dimensions 2 x 3 and initialize it with the values 1, 2, 3, 4, 5, and 6. We then declare a pointer to an array of 3 integers `ptr` and initialize it to point to the first element of `a`. We then use the `printf()` function to print the values of the second and third elements of the first row of `a` (which are 2 and 3, respectively), and then increment the pointer `ptr` to point to the second row of `a`. Finally, we use `printf()` again to print the values of the second and third elements of the second row of `a` (which are 5 and 6, respectively).
+
+Program:8
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+    int i;
+    int *ptr = (int *) malloc(5 * sizeof(int));
+    for (i=0; i<5; i++)
+    *(ptr + i) = i;
+    printf("%d ", *ptr++);
+    printf("%d ", (*ptr)++);
+    printf("%d ", *ptr);
+    printf("%d ", *++ptr);
+    printf("%d ", ++*ptr);
+}
+
+Running result: 
+0 1 2 2 3
+
+Pointer box:
+
+
+    +----+----+----+----+----+
+ptr |    |    |    |    |    |
+    +----+----+----+----+----+
+       |    |    |    |    |
+       v    v    v    v    v
+    +----+----+----+----+----+
+     |  0 |  1 |  2 |  3 |  4 |
+    +----+----+----+----+----+
+
+In this program, we first allocate memory for an array of 5 integers using the `malloc()` function and assign the address of the first element to the pointer `ptr`. We then use a `for` loop to initialize the elements of the array with the values 0, 1, 2, 3, and 4. We then use the `printf()` function to print the values of `ptr` and its incremented or decremented values.
+
+Program:9
+
+
+#include <stdio.h>
+
+int fun(int arr[]) {
+    arr = arr+1;
+    printf("%d ", arr[0]);
+}
+
+int main(void) {
+    int arr[2] = {10, 20};
+    fun(arr);
+    printf("%d", arr[0]);
+    return 0;
+}
+
+Running result:
+ 20 10
+
+Pointer box:
+
+
+    +----+----+
+arr | 10 | 20 |
+    +----+----+
+
+    +----+
+arr |    |
+    +----+
+     |
+     v
+    +----+----+
+arr | 10 | 20 |
+    +----+----+
+
+In this program, we declare an array of integers `arr` with two elements and initialize it with the values 10 and 20. We then call the function `fun()` and pass it a reference to the first element of `arr`. In the `fun()` function, we add 1 to the pointer `arr` using pointer arithmetic, which causes it to point to the second element of `arr`. We then print the value of the second element of `arr` (which is 20). Back in the `main()` function, we print the value of the first element of `arr` (which is still 10) and then return 0 to exit the program.
+
+
+
+2. Analyze the following programs with function pointer and explain by
+pointer box
+
+Program:1
+
+#include <stdio.h>
+
+void fun(int a) {
+    printf("Value of a is %d\n", a);
+}
+
+int main() {
+    void (*fun_ptr)(int) = &fun;
+    (*fun_ptr)(10);
+    return 0;
+}
+
+Running result: Value of a is 10
+
+Pointer box:
+
+
+          +-----+
+fun_ptr -> |  *  |
+          +-----+
+              |
+              v
+          +-----+     +----+
+          | fun | --> | a  |
+          +-----+     +----+
+
+In this program, we declare a function `fun()` that takes an integer argument `a` and prints its value to the console using the `printf()` function. We then declare a function pointer `fun_ptr` that takes an integer argument and points to the address of the `fun()` function using the address-of operator `&`. Finally, we dereference the function pointer `fun_ptr` and pass it the value 10 as an argument, which causes the `fun()` function to be called with the value 10 as its argument. The `printf()` function then prints the message "Value of a is 10" to the console.
+
+
+Program:2
+
+#include <stdio.h>
+
+void add(int a, int b) {
+    printf("Addition is %d\n", a+b);
+}
+
+void subtract(int a, int b) {
+    printf("Subtraction is %d\n", a-b);
+}
+
+void multiply(int a, int b) {
+    printf("Multiplication is %d\n", a*b);
+}
+
+int main() {
+    void (*fun_ptr_arr[])(int, int) = {add, subtract, multiply};
+    unsigned int ch, a = 15, b = 10;
+    printf("Enter Choice: 0 for add, 1 for subtract and 2 for multiply\n");
+    scanf("%d", &ch);
+    if (ch > 2) return 0;
+    (*fun_ptr_arr[ch])(a, b);
+    return 0;
+}
+
+Running result: Enter Choice: 0 for add, 1 for subtract and 2 for multiply
+
+Pointer box:
+
+
+                     +-------+
+fun_ptr_arr[0] -->   |       | --> +-------+     +----+----+
+                     |   add |      |   a   | --> | 15 | 10 |
+                     +-------+      +-------+     +----+----+
+
+                     +-----------+
+fun_ptr_arr[1] -->   |           | --> +-----------+     +----+----+
+                     | subtract  |      |    a      | --> | 15 | 10 |
+                     +-----------+      +-----------+     +----+----+
+
+                     +-------+
+fun_ptr_arr[2] -->   |       | --> +-----------+     +----+----+
+                     |multiply|      |    a      | --> | 15 | 10 |
+                     +-------+      +-----------+     +----+----+
+
+In this program, we declare three functions, `add()`, `subtract()`, and `multiply()`, each of which takes two integer arguments and performs a different arithmetic operation on them. We then declare an array of function pointers `fun_ptr_arr` that points to each of these functions. We also declare three integer variables, `ch`, `a`, and `b`, and initialize `a` and `b` to the values 15 and 10, respectively.
+
+The program then prompts the user to enter a choice (0, 1, or 2) for which arithmetic operation they want to perform. If the user enters a value greater than 2, the program exits. Otherwise, the program dereferences the function pointer at the index `ch` in the `fun_ptr_arr` array and passes it the values of `a` and `b` as arguments. This calls the appropriate arithmetic function and prints the result of the operation to the console.
+
+The output shows that the program prompts the user to enter a choice for which arithmetic operation to perform.
+
+Program:3
+
+
+#include <stdio.h>
+void fun1() { printf("Fun1\n"); }
+void fun2() { printf("Fun2\n"); }
+void wrapper(void (*fun)()) {
+    fun();
+}
+int main() {
+    wrapper(fun1);
+    wrapper(fun2);
+    return 0;
+}
+
+Running result: 
+Fun2
+
+Pointer box:
+
+                  +--------+
+wrapper(fun1) -> |        | --> +-------+
+                  |  fun1  |      |       |
+                  +--------+      +-------+
+
+                  +--------+
+wrapper(fun2) -> |        | --> +-------+
+                  |  fun2  |      |       |
+                  +--------+      +-------+
+
+In this program, we declare two functions, `fun1()` and `fun2()`, each of which prints a different message to the console using the `printf()` function. We also declare a function `wrapper()` that takes a function pointer `fun` as an argument and calls that function using the `()` operator.
+
+In the `main()` function, we call the `wrapper()` function twice, once with `fun1` as the argument and once with `fun2` as the argument. This causes the `fun2()` function to be called second, which prints the message "Fun2" to the console.
+
+The output shows that the `fun2()` function was called and printed its message to the console.
+
+
+Program 4
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare (const void * a, const void * b) {
+    return ( *(int*)a - *(int*)b );
+}
+
+int main () {
+    int arr[] = {10, 5, 15, 12, 90, 80};
+    int n = sizeof(arr)/sizeof(arr[0]), i;
+    qsort (arr, n, sizeof(int), compare);
+    for (i=0; i
+Running result: 5 10 12 15 80 90
+
+Pointer box:
+
+
+         +-----+
+void *a ->|     | --> +-----+
+         | arr |     |  10 |
+         +-----+     +-----+
+                      |  5  |
+                      +-----+
+                      |  15 |
+                      +-----+
+                      |  12 |
+                      +-----+
+                      |  90 |
+                      +-----+
+                      |  80 |
+                      +-----+
+
+In this program, we declare an integer array `arr` with six elements and initialize it with some values. We also declare an integer variable `n` to hold the number of elements in the array, which is calculated using the `sizeof` operator. We then declare an integer variable `i` for use in a `for` loop later on.
+
+The program then calls the `qsort` function to sort the elements of the `arr` array in ascending order using the `compare` function as a comparison function. The `compare` function takes two `const void` pointer arguments `a` and `b` and returns the difference between the values pointed to by the two pointers after casting them to `int` pointers. This causes the `qsort` function to sort the elements of the array in ascending order.
+
+Finally, the program uses a `for` loop to print the sorted elements of the array to the console using the `printf` function.
+
+The output shows that the elements of the array are sorted in ascending order.
+
+
+Program 5
+#include <stdio.h>
+#include <stdbool.h>
+
+bool compare (const void * a, const void * b) {
+    return ( *(int*)a == *(int*)b );
+}
+
+int search(void *arr, int arr_size, int ele_size, void *x,
+           bool compare (const void * , const void *)) {
+    char *ptr = (char *)arr;
+    int i;
+    for (i=0; i
+Running result: Returned index is 2
+
+Pointer box:
+
+
+         +-----+
+void *a ->|     | --> +-----+
+         | arr |     |  2  |
+         +-----+     +-----+
+                      |  5  |
+                      +-----+
+                      |  7  |
+                      +-----+
+                      |  90 |
+                      +-----+
+                      |  70 |
+                      +-----+
+
+In this program, we declare an integer array `arr` with five elements and initialize it with some values. We also declare an integer variable `n` to hold the number of elements in the array, which is calculated using the `sizeof` operator. We then declare an integer variable `x` to hold the element we want to search for and a pointer `ptr` to a character array that will be used to iterate over the elements of the array.
+
+The program then calls the `search` function to search for the element `x` in the `arr` array using the `compare` function as a comparison function. The `search` function takes four arguments: `arr`, the array to search; `arr_size`, the number of elements in the array; `ele_size`, the size of each element in the array; `x`, the element to search for; and `compare`, a function pointer to a comparison function. The `search` function iterates over the elements of the array using pointer arithmetic, and calls the `compare` function to compare the current element to the target element. If the `compare` function returns `true`, the `search` function returns the index of the current element. If the element is not found, the `search` function returns `-1`.
+
+Finally, the program uses the `printf` function to print the index of the element returned by the `search` function to the console.
+
+The output shows that the index of the element `7` in the `arr` array is `2`.
+
+3. Check the following programs with function return pointer and explain by
+pointer box
+
+Program1
+
+#include <stdio.h>
+
+int *returnPointer(int *p);
+
+int main() {
+    int i = 10;
+    int *ptr1, *ptr2;
+    ptr1 = &i;
+    ptr2 = returnPointer(&i);
+    printf("\n *ptr1 = %d", *ptr1);
+    printf("\n *ptr2 = %d", *ptr2);
+    return 0;
+}
+
+int *returnPointer(int *pt) {
+    return pt;
+}
+
+Running result: 
+*ptr1 = 10
+*ptr2 = 10
+
+Pointer box:
+
+
+         +-----+
+void *p ->|     | --> +---+
+         |  10 |     | 10|
+         +-----+     +---+
+                       ^
+                       |
+                      ptr2
+
+In this program, we declare an integer variable `i` and initialize it to `10`. We then declare two integer pointers `ptr1` and `ptr2`, and set `ptr1` to point to `i`. We call the `returnPointer` function and pass it the address of `i`. The function simply returns the pointer passed to it. We set `ptr2` to the value returned by `returnPointer`.
+
+The program then uses the `printf` function to print the values pointed to by `ptr1` and `ptr2` to the console.
+
+The output shows that both `ptr1` and `ptr2` point to the same value, which is `10`.
+
+Program 2
+
+#include <stdio.h>
+int *returnFunc();
+int main()
+{
+int *ptr=returnFunc();
+printf("\n *ptr = %d",*ptr);
+printf("\n *ptr = %d",*ptr);
+printf("\n *ptr = %d",*ptr);
+return 0;
+}
+int *returnFunc()
+{
+int i=10;
+return &i;
+}
+
+The program declares a function called returnFunc that returns a pointer to an integer. This function creates a local variable i with a value of 10, takes the address of this variable using the & operator, and returns this address as a pointer.
+In the main function, a pointer ptr is declared and assigned the value returned by returnFunc. This pointer points to the memory location of the local variable i in the returnFunc function.
+The program then prints the value pointed to by ptr three times using the %d format specifier. However, the behavior of this program is undefined because it's trying to access a memory address that has already been deallocated when the returnFunc function returns.
+
+
+Here is a pointer box diagram to illustrate the memory allocation and usage in this program:
+
+
++-------------+
+| main        |
+|-------------|
+| ptr         |
++-------------+
+    |
+    |
+    v
++-------------+
+| returnFunc  |
+|-------------|
+| i = 10      |
++-------------+
+    ^
+    |
+    |
++-------------+
+|             |
+|  (unallocated memory)
+|             |
++-------------+
+
+As shown in the diagram, the local variable i in returnFunc is deallocated when the function returns, so the memory location that ptr points to is no longer valid. Therefore, the behavior of the program is unpredictable and may result in a segmentation fault or other runtime errors.
+
+Program 3
+
+#include <stdio.h>
+int *returnFunc();
+int main() {
+    int *ptr = returnFunc();
+    printf("\n *ptr = %d", *ptr);
+    printf("\n *ptr = %d", *ptr);
+    printf("\n *ptr = %d", *ptr);
+    return 0;
+}
+int *returnFunc() {
+    static int i = 10;
+    return &i;
+}
+
+
+Running result: 
+*ptr = 10
+*ptr = 10
+
+Pointer box:
+
+
+          +------+      +------+
+static i->|  10  |      |      |
+          +------+      +------+
+                         ^
+                         |
+                        ptr
+
+In this program, we declare a static integer variable `i` inside the `returnFunc` function and initialize it to `10`. We then return a pointer to `i`. Since `i` is declared as `static`, it is not destroyed when the function returns, and its address remains valid.
+
+The program then declares an integer pointer `ptr`, and sets it to the value returned by the `returnFunc` function. The program uses the `printf` function to print the value pointed to by `ptr` to the console three times.
+
+The output shows that all three calls to `printf` correctly print the value `10`, which is the value of `i`.
+
